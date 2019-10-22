@@ -17,7 +17,7 @@ import UIKit
 // このサンプルがすごい
 // https://developer.apple.com/documentation/uikit/views_and_controls/collection_views/using_collection_view_compositional_layouts_and_diffable_data_sources
 
-class MainViewController: UIViewController {
+final class MainViewController: UIViewController {
 
   struct CellModel : Hashable {
 
@@ -110,12 +110,14 @@ class MainViewController: UIViewController {
 
   }
 
-
   override func viewDidLoad() {
     super.viewDidLoad()
 
     view.backgroundColor = .systemBackground
 
+    navigationController?.navigationBar.largeContentImage = UIImage().withTintColor(.black, renderingMode: .alwaysTemplate)
+    navigationItem.largeTitleDisplayMode = .always
+    navigationController?.navigationBar.prefersLargeTitles = true
     title = "Title"
 
     let addButton = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(addItem))
@@ -125,6 +127,8 @@ class MainViewController: UIViewController {
     collectionView.frame = view.bounds
     collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     collectionView.alwaysBounceVertical = true
+    collectionView.delegate = self
+
     view.addSubview(collectionView)
 
     var snapshot = dataSource.snapshot()
@@ -142,5 +146,15 @@ class MainViewController: UIViewController {
     var snapshot = dataSource.snapshot()
     snapshot.appendItems([CellModel(title: "Detail Item")], toSection: .detail)
     dataSource.apply(snapshot)
+  }
+}
+
+extension MainViewController: UICollectionViewDelegate {
+
+  func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    let cell = dataSource.collectionView(collectionView, cellForItemAt: indexPath)
+    let item = dataSource.itemIdentifier(for: indexPath)
+    print("fuga:", cell)
+    print("hoge:", item)
   }
 }
